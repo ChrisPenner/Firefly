@@ -1,0 +1,14 @@
+resolver: lts-9.1
+
+packages:
+- ./curryer
+- ./curryer-example
+
+extra-deps: []
+
+nix:
+  enable: true
+
+flags: {}
+
+extra-package-dbs: []
