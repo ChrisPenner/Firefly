@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Web.Curryer
 
 main :: IO ()
-main = someFunc
+main = run 3000 (return ())

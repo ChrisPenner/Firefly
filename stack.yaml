@@ -1,13 +1,18 @@
 resolver: lts-9.1
 
+nix:
+  enable: true
+  packages:
+    - libcxx
+    - icu
+    - gcc
+    - ncurses
+
 packages:
 - ./curryer
 - ./curryer-example
 
 extra-deps: []
-
-nix:
-  enable: true
 
 flags: {}
 
