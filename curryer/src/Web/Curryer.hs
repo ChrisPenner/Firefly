@@ -3,6 +3,9 @@
 module Web.Curryer
   ( run
   , App
+  , Handler
+  , ToResponse(..)
+  , ToBody(..)
   , module Network.HTTP.Types.Status
   ) where
 
@@ -13,10 +16,8 @@ import Network.HTTP.Types.Header
 
 import Control.Monad.Reader
 import Control.Monad.State
-import Control.Lens
+import Control.Monad.Cont
 
-import qualified Data.ByteString as BS
-import qualified Data.ByteString.Lazy as LBS
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T (encodeUtf8)
 import qualified Data.Text.Lazy as LT
@@ -24,35 +25,37 @@ import qualified Data.Text.Lazy.Encoding as LT (encodeUtf8)
 import qualified Data.Map.Strict as M
 import qualified Data.CaseInsensitive as CI
 
+import Web.Curryer.Handler
+import Web.Curryer.App
+import Web.Curryer.Internal.Utils
+
 class ToResponse c where
   toResponse :: c -> W.Response
 
 class ToBody b where
-  toBody :: b -> LBS.ByteString
+  toBody :: b -> T.Text
   contentType :: b -> T.Text
 
 instance ToBody T.Text where
-  toBody = toLBS
+  toBody = id
   contentType _ = "text/plain"
 
 instance (ToBody b) => ToResponse (Status, b) where
   toResponse (status, body)
-    = W.responseLBS status [mkHeader "Content-Type" (contentType body)] (toBody body)
+    = W.responseLBS
+          status
+          [mkHeader "Content-Type" (contentType body)]
+          (toLBS $ toBody body)
 
-type App c = ReaderT W.Request IO c
 
 mkHeader :: T.Text -> T.Text -> Header
 mkHeader headerName headerVal = (CI.mk (toBS headerName), toBS headerVal)
 
-run :: ToResponse r => W.Port -> App r -> IO ()
+run :: W.Port -> App (Status, T.Text) () -> IO ()
 run p app = W.run p warpApp
   where
+    warpApp :: W.Request -> (W.Response -> IO W.ResponseReceived) -> IO W.ResponseReceived
     warpApp req respond = do
-      resp <- runReaderT app req
+      resp <- flip runContT (const $ return (notFound404, "Not Found")) . flip runReaderT req $ app :: IO (Status, T.Text)
       respond $ toResponse resp
 
-toBS :: T.Text -> BS.ByteString
-toBS = T.encodeUtf8
-
-toLBS :: T.Text -> LBS.ByteString
-toLBS = LT.encodeUtf8 . LT.fromStrict
