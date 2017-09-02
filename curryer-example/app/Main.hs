@@ -1,4 +1,5 @@
 {-# language OverloadedStrings #-}
+{-# language RankNTypes #-}
 module Main where
 
 import Web.Curryer
@@ -8,7 +9,7 @@ import qualified Data.Text as T
 main :: IO ()
 main = run 3000 app
 
-app :: Respond -> App (Status, T.Text) ()
+app :: Respond -> App ()
 app resp = do
   route "/hello" hello resp
   route "/goodbye" goodbye resp

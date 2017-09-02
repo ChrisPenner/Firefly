@@ -1,4 +1,5 @@
 {-# language OverloadedStrings #-}
+{-# language RankNTypes #-}
 module Web.Curryer.Routing
   ( route
   , Respond
@@ -7,7 +8,7 @@ module Web.Curryer.Routing
   ) where
 
 -- import Web.Curryer.Handler
--- import Web.Curryer.App
+import Web.Curryer.App
 import Web.Curryer.Request
 -- import Web.Curryer
 import Network.HTTP.Types.Status
@@ -16,18 +17,14 @@ import Control.Monad.Reader
 import qualified Network.Wai as W
 import qualified Data.Text as T
 
-type App r a = ReaderT W.Request (ContT r IO) a
+type App a = ContT W.Response (ReaderT W.Request IO) a
 type Handler a = ReaderT W.Request IO a
-type Respond = ((Status, T.Text) -> App (Status, T.Text) ())
+type Respond = forall r. ToResponse r => r -> App ()
 
-route :: T.Text -> Handler (Status, T.Text) -> Respond -> App (Status, T.Text) ()
+route :: ToResponse r => T.Text -> Handler r -> Respond -> App ()
 route routePath handler respond = do
   liftIO $ print $ "Checking" `T.append` routePath
   pth <- path
-  liftIO $ do
-      print pth
-      print routePath
-      print (pth == routePath)
   when (routePath == pth) $ do
     req <- ask
     response <- liftIO $ runReaderT handler req
