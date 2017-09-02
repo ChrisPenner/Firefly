@@ -1,8 +1,12 @@
+{-# language RankNTypes #-}
 {-# language OverloadedStrings #-}
 {-# language FlexibleInstances #-}
-module Web.Curryer.App
+module Web.Curryer.Types
   ( ToResponse(..)
   , ToBody(..)
+  , App
+  , Handler
+  , Respond
   ) where
 
 import Control.Monad.Reader
@@ -14,6 +18,9 @@ import qualified Data.Text as T
 import qualified Data.CaseInsensitive as CI
 import Web.Curryer.Internal.Utils
 
+type App a = ContT W.Response (ReaderT W.Request IO) a
+type Handler a = ReaderT W.Request IO a
+type Respond = forall r. ToResponse r => r -> App ()
 
 class ToResponse c where
   toResponse :: c -> W.Response

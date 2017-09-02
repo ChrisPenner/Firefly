@@ -19,7 +19,7 @@ library
                        Web.Curryer.Routing
                        Web.Curryer.Request
                        Web.Curryer.Internal.Utils
-                       Web.Curryer.App
+                       Web.Curryer.Types
                        Web.Curryer.Handler
 
   build-depends:       base >= 4.7 && < 5

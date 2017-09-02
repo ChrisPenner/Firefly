@@ -8,7 +8,7 @@ import qualified Data.Text as T
 import qualified Network.Wai as W
 import Network.HTTP.Types.Status
 
-import Web.Curryer.App
+import Web.Curryer.Types
 import Web.Curryer.Internal.Utils
 
 path :: MonadReader W.Request m => m T.Text
