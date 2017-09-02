@@ -25,6 +25,7 @@ import qualified Data.Text.Lazy.Encoding as LT (encodeUtf8)
 import qualified Data.Map.Strict as M
 import qualified Data.CaseInsensitive as CI
 
+import Web.Curryer.Routing
 import Web.Curryer.Handler
 import Web.Curryer.App
 import Web.Curryer.Internal.Utils
@@ -51,11 +52,15 @@ instance (ToBody b) => ToResponse (Status, b) where
 mkHeader :: T.Text -> T.Text -> Header
 mkHeader headerName headerVal = (CI.mk (toBS headerName), toBS headerVal)
 
-run :: W.Port -> App (Status, T.Text) () -> IO ()
+run :: W.Port -> (Respond -> App (Status, T.Text) ()) -> IO ()
 run p app = W.run p warpApp
   where
     warpApp :: W.Request -> (W.Response -> IO W.ResponseReceived) -> IO W.ResponseReceived
     warpApp req respond = do
-      resp <- flip runContT (const $ return (notFound404, "Not Found")) . flip runReaderT req $ app :: IO (Status, T.Text)
-      respond $ toResponse resp
+      resp <- runCurryer app req
+      respond $ toResponse (resp :: (Status, T.Text))
 
+runCurryer :: (Respond -> App (Status, T.Text) ()) -> W.Request -> IO (Status, T.Text)
+runCurryer app req = flip runContT return $ flip runReaderT req $ callCC def
+  where
+    def resp = app resp >> return (notFound404, "Not Found")

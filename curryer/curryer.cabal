@@ -18,7 +18,7 @@ library
   exposed-modules:     Web.Curryer
                        Web.Curryer.Routing
                        Web.Curryer.Request
-                       Web.Curryer.Utils
+                       Web.Curryer.Internal.Utils
                        Web.Curryer.App
                        Web.Curryer.Handler
 

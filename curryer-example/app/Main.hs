@@ -8,8 +8,13 @@ import qualified Data.Text as T
 main :: IO ()
 main = run 3000 app
 
-app :: App (Status, T.Text) ()
-app = route "/hello" hello
+app :: Respond -> App (Status, T.Text) ()
+app resp = do
+  route "/hello" hello resp
+  route "/goodbye" goodbye resp
 
 hello :: Handler (Status, T.Text)
 hello = return (ok200, "Hello World!")
+
+goodbye :: Handler (Status, T.Text)
+goodbye = return (ok200, "Goodbye World!")

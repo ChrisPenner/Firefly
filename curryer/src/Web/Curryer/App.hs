@@ -1,6 +1,6 @@
 module Web.Curryer.App
-  ( App
-  , Handler
+  (--  App
+ --  , Handler
   ) where
 
 import Control.Monad.Reader
