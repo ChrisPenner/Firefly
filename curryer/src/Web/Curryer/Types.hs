@@ -13,7 +13,8 @@ type Handler a = App a
 type Pattern = T.Text
 type Route = T.Text
 type HeaderMap = M.Map (CI.CI T.Text) [T.Text]
-type QueryMap = M.Map T.Text [T.Text]
+type MultiQueryMap = M.Map T.Text [T.Text]
+type QueryMap = M.Map T.Text T.Text
 
 data ReqContext = ReqContext
   { body :: T.Text

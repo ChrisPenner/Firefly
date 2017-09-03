@@ -9,6 +9,7 @@ module Web.Curryer
   , App
   , Handler
   , module Network.HTTP.Types.Status
+  , module Web.Curryer.Request
   ) where
 
 import qualified Network.Wai.Handler.Warp as W
@@ -20,6 +21,7 @@ import Control.Monad.Cont
 
 import qualified Data.Text as T
 
+import Web.Curryer.Request
 import Web.Curryer.Routing
 import Web.Curryer.Response
 import Web.Curryer.Types

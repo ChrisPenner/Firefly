@@ -3,6 +3,7 @@
 module Main where
 
 import Web.Curryer
+import Data.Maybe
 import qualified Data.Text as T
 
 main :: IO ()
@@ -14,7 +15,9 @@ app = do
   route "/goodbye" goodbye
 
 hello :: App (Status, T.Text)
-hello = return (ok200, "Hello World!")
+hello = do
+  name <- getQuery "name"
+  return (ok200, "Hello " `T.append` fromMaybe "Stranger" name)
 
 goodbye :: App (Status, T.Text)
 goodbye = return (ok200, "Goodbye World!")
