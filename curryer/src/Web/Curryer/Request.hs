@@ -5,7 +5,8 @@ module Web.Curryer.Request
   ( getPath
   , getMethod
   , getQueryString
-  , getRequestHeaders
+  , getQueryParams
+  , getHeaders
   , getPathInfo
   , isSecure
   , getBody
@@ -28,8 +29,11 @@ getPath = fromBS <$> fromReq W.rawPathInfo
 getMethod = fromBS <$> fromReq W.requestMethod
 getQueryString = fromBS <$> fromReq W.rawQueryString
 
-getRequestHeaders :: ReqReader m => m HeaderMap
-getRequestHeaders = convertHeaders <$> fromReq W.requestHeaders
+getHeaders :: ReqReader m => m HeaderMap
+getHeaders = convertHeaders <$> fromReq W.requestHeaders
+
+getQueryParams :: ReqReader m => m QueryMap
+getQueryParams = convertQueries <$> fromReq W.queryString
 
 isSecure :: ReqReader m => m Bool
 isSecure = fromReq W.isSecure

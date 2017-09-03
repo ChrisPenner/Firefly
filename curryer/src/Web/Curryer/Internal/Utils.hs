@@ -1,3 +1,4 @@
+{-# language ViewPatterns #-}
 module Web.Curryer.Internal.Utils where
 
 import qualified Data.ByteString as BS
@@ -11,6 +12,7 @@ import qualified Data.CaseInsensitive as CI
 import Web.Curryer.Types
 
 import Network.HTTP.Types.Header
+import Network.HTTP.Types.URI
 import qualified Data.Map as M
 
 toBS :: T.Text -> BS.ByteString
@@ -32,3 +34,8 @@ convertHeaders :: RequestHeaders -> HeaderMap
 convertHeaders = M.unionsWith mappend . fmap embed
   where
     embed (name, val) = M.singleton (CI.map fromBS name) [fromBS val]
+
+convertQueries :: Query -> QueryMap
+convertQueries = M.unionsWith mappend . fmap embed
+  where
+    embed (fromBS -> name, fmap fromBS -> val) = M.singleton name (maybe [] (:[]) val)
