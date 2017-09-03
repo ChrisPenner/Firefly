@@ -8,6 +8,7 @@ module Web.Curryer.Routing
 
 import Web.Curryer.Types
 import Web.Curryer.Request
+import Web.Curryer.Response
 import Control.Monad.Cont
 import Control.Monad.Reader
 import qualified Data.Text as T
@@ -19,7 +20,7 @@ route routePath handler = do
   path <- getPath
   when (routePath `matches` path) $ do
     response <- toResponse <$> handler
-    respond <- asks snd
+    respond <- asks responder
     lift $ respond response
 
 matches :: Route -> Pattern -> Bool

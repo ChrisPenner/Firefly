@@ -6,9 +6,9 @@
 module Web.Curryer
   ( run
   , route
-  , module Network.HTTP.Types.Status
   , App
   , Handler
+  , module Network.HTTP.Types.Status
   ) where
 
 import qualified Network.Wai.Handler.Warp as W
@@ -21,7 +21,9 @@ import Control.Monad.Cont
 import qualified Data.Text as T
 
 import Web.Curryer.Routing
+import Web.Curryer.Response
 import Web.Curryer.Types
+import Web.Curryer.Internal.Utils
 
 run :: W.Port -> App () -> IO ()
 run port app = W.run port warpApp
@@ -33,7 +35,9 @@ runCurryer :: App () -> W.Request -> IO W.Response
 runCurryer app req = runContT (callCC unpackApp) return
   where
     appWith404 = app >> return notFoundResp
-    unpackApp respond = runReaderT appWith404 (req, respond)
+    unpackApp respond = do
+      reqBody <- fmap fromLBS . liftIO $ W.strictRequestBody req
+      runReaderT appWith404 ReqContext{request=req, responder=respond, body=reqBody}
 
 notFoundResp :: W.Response
 notFoundResp = toResponse @(Status, T.Text) (notFound404, "Not Found")
