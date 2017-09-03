@@ -1,13 +1,14 @@
 {-# language RankNTypes #-}
+{-# language FlexibleContexts #-}
 {-# language OverloadedStrings #-}
 {-# language FlexibleInstances #-}
 {-# language TypeApplications #-}
 module Web.Curryer
   ( run
+  , route
   , module Network.HTTP.Types.Status
   , App
   , Handler
-  , Respond
   ) where
 
 import qualified Network.Wai.Handler.Warp as W
@@ -22,15 +23,17 @@ import qualified Data.Text as T
 import Web.Curryer.Routing
 import Web.Curryer.Types
 
-run :: W.Port -> (Respond -> App ()) -> IO ()
-run p app = W.run p warpApp
+run :: W.Port -> App () -> IO ()
+run port app = W.run port warpApp
   where
     warpApp :: W.Request -> (W.Response -> IO W.ResponseReceived) -> IO W.ResponseReceived
-    warpApp req respond = do
-      resp <- runCurryer app req
-      respond resp
+    warpApp req respond = runCurryer app req >>= respond
 
-runCurryer :: (Respond -> App ()) -> W.Request -> IO W.Response
-runCurryer app req = flip runReaderT req $ flip runContT return $ callCC def
+runCurryer :: App () -> W.Request -> IO W.Response
+runCurryer app req = runContT (callCC unpackApp) return
   where
-    def resp = app (resp . toResponse) >> return (toResponse @(Status, T.Text) (notFound404, "Not Found"))
+    appWith404 = app >> return notFoundResp
+    unpackApp respond = runReaderT appWith404 (req, respond)
+
+notFoundResp :: W.Response
+notFoundResp = toResponse @(Status, T.Text) (notFound404, "Not Found")

@@ -1,15 +1,13 @@
 {-# language FlexibleContexts #-}
 module Web.Curryer.Request
-  ( path
+  ( getPath
   ) where
 
 import Control.Monad.Reader
 import qualified Data.Text as T
 import qualified Network.Wai as W
-import Network.HTTP.Types.Status
 
-import Web.Curryer.Types
 import Web.Curryer.Internal.Utils
 
-path :: MonadReader W.Request m => m T.Text
-path = fromBS <$> asks W.rawPathInfo
+getPath :: MonadReader (W.Request, q) m => m T.Text
+getPath = fromBS <$> asks (W.rawPathInfo . fst)
