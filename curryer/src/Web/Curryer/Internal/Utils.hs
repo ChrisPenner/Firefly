@@ -1,4 +1,3 @@
-{-# language ViewPatterns #-}
 {-# language OverloadedStrings #-}
 module Web.Curryer.Internal.Utils where
 
@@ -13,7 +12,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
 import qualified Data.CaseInsensitive as CI
 
-import Network.HTTP.Types.Header
+import qualified Network.HTTP.Types.Header as HTTP
 import Network.HTTP.Types.URI
 
 import Web.Curryer.Types
@@ -30,10 +29,10 @@ fromBS = T.decodeUtf8
 fromLBS :: LBS.ByteString -> T.Text
 fromLBS = LT.toStrict . LT.decodeUtf8
 
-mkHeader :: T.Text -> T.Text -> Header
+mkHeader :: T.Text -> T.Text -> HTTP.Header
 mkHeader headerName headerVal = (CI.mk (toBS headerName), toBS headerVal)
 
-convertHeaders :: RequestHeaders -> HeaderMap
+convertHeaders :: HTTP.RequestHeaders -> HeaderMap
 convertHeaders = M.fromListWith mappend . fmap (bimap mapName mapVal)
   where
     mapName = CI.map fromBS
