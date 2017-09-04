@@ -4,10 +4,19 @@ module Main where
 
 import Web.Curryer
 import Data.Maybe
+import Control.Monad.Trans
 import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
 
 main :: IO ()
-main = run 3000 app
+main = run 3000 (loggerMiddleware app)
+
+loggerMiddleware :: App () -> App ()
+loggerMiddleware baseApp = do
+  path <- getPath
+  method <- getMethod
+  liftIO . TIO.putStrLn $ "INFO: " `T.append` method `T.append` " to " `T.append` path
+  baseApp
 
 app :: App ()
 app = do

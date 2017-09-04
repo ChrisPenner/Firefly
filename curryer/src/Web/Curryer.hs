@@ -28,10 +28,13 @@ import Web.Curryer.Types
 import Web.Curryer.Internal.Utils
 
 run :: W.Port -> App () -> IO ()
-run port app = W.run port warpApp
+run = runWith return
+
+runWith :: (W.Response -> IO W.Response) -> W.Port -> App () -> IO ()
+runWith after port app = W.run port warpApp
   where
     warpApp :: W.Request -> (W.Response -> IO W.ResponseReceived) -> IO W.ResponseReceived
-    warpApp req respond = runCurryer app req >>= respond
+    warpApp req respond = runCurryer app req >>= after >>= respond
 
 runCurryer :: App () -> W.Request -> IO W.Response
 runCurryer app req = runContT (callCC unpackApp) return
