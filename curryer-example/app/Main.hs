@@ -20,4 +20,6 @@ hello = do
   return (ok200, "Hello " `T.append` fromMaybe "Stranger" name)
 
 goodbye :: App (Status, T.Text)
-goodbye = return (ok200, "Goodbye World!")
+goodbye = do
+  name <- getCookie "name"
+  return (ok200, "Goodbye " `T.append` fromMaybe "Stranger" name)
