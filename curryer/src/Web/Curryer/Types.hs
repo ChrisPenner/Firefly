@@ -15,11 +15,10 @@ type Route = T.Text
 type HeaderMap = M.Map (CI.CI T.Text) [T.Text]
 type MultiQueryMap = M.Map T.Text [T.Text]
 type QueryMap = M.Map T.Text T.Text
-type Body = T.Text
 type ContentType = T.Text
 
 data ReqContext = ReqContext
-  { body :: T.Text
+  { requestBody :: T.Text
   , request :: W.Request
   , responder :: W.Response -> ContT W.Response IO ()
   }

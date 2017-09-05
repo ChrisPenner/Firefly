@@ -1,10 +1,14 @@
 {-# language FlexibleInstances #-}
 {-# language OverloadedStrings #-}
+{-# language UndecidableInstances #-}
 module Web.Curryer.Response
   ( ToResponse(..)
-  , ToBody(..)
+  , Json(..)
+  , respond
   ) where
 
+import Data.Function ((&))
+import Control.Monad.Reader
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
 import Data.Aeson as Aeson
@@ -18,34 +22,42 @@ import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Web.Curryer.Internal.Utils
 import Web.Curryer.Types
 
-class ToResponse c where
-  toResponse :: c -> W.Response
-
-class ToBody b where
-  toBody :: b -> Either SerializationError (Body, ContentType)
-
-instance ToBody T.Text where
-  toBody txt = return (txt, "text/plain")
-
-instance ToBody Html where
-  toBody txt = return (TL.toStrict (renderHtml txt), "text/html")
-
-instance ToBody Aeson.Value where
-  toBody b = case fromJSON b of
-               Error err -> Left $ SerializationError (T.pack err)
-               Success txt -> Right (txt, "application/json")
-
 newtype Json a = Json a
   deriving Show
 
-instance (ToJSON a) => ToBody (Json a) where
-  toBody (Json obj) = Right (fromLBS $ encode obj, "application/json")
+class ToResponse c where
+  toResponse :: c -> W.Response
+
+instance ToResponse T.Text where
+  toResponse = mkResponse ok200 "text/plain"
+
+instance ToResponse Html where
+  toResponse = mkResponse ok200 "text/html" . TL.toStrict . renderHtml
+
+instance ToResponse Aeson.Value where
+  toResponse = mkResponse ok200 "application/json" . fromLBS . encode
+
+instance (ToJSON a) => ToResponse (Json a) where
+  toResponse (Json obj) = toResponse (toJSON obj)
 
 instance ToResponse W.Response where
   toResponse = id
 
-instance (ToBody b) => ToResponse (Status, b) where
-  toResponse (status, respBody) =
-    case toBody respBody of
-      Left (SerializationError err) -> W.responseLBS internalServerError500 [mkHeader "Content-Type" "text/plain"] (toLBS err)
-      Right (b, ct) -> W.responseLBS status [mkHeader "Content-Type" ct] (toLBS b)
+instance (ToResponse b) => ToResponse (b, Status) where
+  toResponse (b, status) = toResponse (b, status, mempty :: HeaderMap)
+
+instance (ToResponse b) => ToResponse (b, Status, HeaderMap) where
+  toResponse (b, status, hm) =
+        toResponse b
+      & mapResponseStatus (const status)
+      & mapResponseHeaders (++ fromHeaderMap hm)
+
+
+mkResponse :: Status -> ContentType -> T.Text -> W.Response
+mkResponse status contentType body =
+  W.responseLBS status [mkHeader "Content-Type" contentType] (toLBS body)
+
+respond :: ToResponse r => r -> App ()
+respond r = do
+  resp <- asks responder
+  lift . resp $ toResponse r

@@ -20,8 +20,8 @@ route routePath handler = do
   path <- getPath
   when (routePath `matches` path) $ do
     response <- toResponse <$> handler
-    respond <- asks responder
-    lift $ respond response
+    resp <- asks responder
+    lift $ resp response
 
 matches :: Route -> Pattern -> Bool
 matches (T.unpack -> rt) (T.unpack -> pat) = ("^" ++ pat ++ "$") =~ rt

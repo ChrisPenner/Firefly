@@ -38,6 +38,11 @@ convertHeaders = M.fromListWith mappend . fmap (bimap mapName mapVal)
     mapName = CI.map fromBS
     mapVal val = [fromBS val]
 
+fromHeaderMap :: HeaderMap -> HTTP.ResponseHeaders
+fromHeaderMap hm = do
+  (headerName, values) <- M.toList hm
+  [(CI.map toBS headerName, toBS value) | value <- values]
+
 qsToList :: Query -> [(T.Text, Maybe T.Text)]
 qsToList = fmap (bimap fromBS (fmap fromBS))
 

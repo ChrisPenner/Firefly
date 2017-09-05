@@ -8,6 +8,9 @@ module Web.Curryer
   , route
   , App
   , Handler
+  , ToResponse(..)
+  , Json(..)
+  , respond
   , module Network.HTTP.Types.Status
   , module Web.Curryer.Request
   ) where
@@ -34,15 +37,15 @@ runWith :: (W.Response -> IO W.Response) -> W.Port -> App () -> IO ()
 runWith after port app = W.run port warpApp
   where
     warpApp :: W.Request -> (W.Response -> IO W.ResponseReceived) -> IO W.ResponseReceived
-    warpApp req respond = runCurryer app req >>= after >>= respond
+    warpApp req resp = runCurryer app req >>= after >>= resp
 
 runCurryer :: App () -> W.Request -> IO W.Response
 runCurryer app req = runContT (callCC unpackApp) return
   where
     appWith404 = app >> return notFoundResp
-    unpackApp respond = do
+    unpackApp resp = do
       reqBody <- fmap fromLBS . liftIO $ W.strictRequestBody req
-      runReaderT appWith404 ReqContext{request=req, responder=respond, body=reqBody}
+      runReaderT appWith404 ReqContext{request=req, responder=resp, requestBody=reqBody}
 
 notFoundResp :: W.Response
-notFoundResp = toResponse @(Status, T.Text) (notFound404, "Not Found")
+notFoundResp = toResponse @(T.Text, Status) ("Not Found", notFound404)

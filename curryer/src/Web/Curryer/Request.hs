@@ -42,7 +42,7 @@ getPath, getMethod, getQueryString, getBody :: ReqReader m => m T.Text
 getPath = fromBS <$> fromReq W.rawPathInfo
 getMethod = fromBS <$> fromReq W.requestMethod
 getQueryString = fromBS <$> fromReq W.rawQueryString
-getBody = asks body
+getBody = asks requestBody
 
 getHeaders :: ReqReader m => m HeaderMap
 getHeaders = convertHeaders <$> fromReq W.requestHeaders
