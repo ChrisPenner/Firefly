@@ -2,17 +2,19 @@
 {-# language RankNTypes #-}
 {-# language DeriveAnyClass #-}
 {-# language DeriveGeneric #-}
+{-# language TypeApplications #-}
 module Main where
 
 import Web.Curryer
 import Data.Maybe
 import Control.Monad.Trans
-import Control.Monad
+import Data.Monoid
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import qualified Text.Blaze.Html5 as H
 import Data.Aeson
 import GHC.Generics
+import Network.Wai as W
 
 main :: IO ()
 main = run 3000 (loggerMiddleware app)
@@ -21,7 +23,7 @@ loggerMiddleware :: App () -> App ()
 loggerMiddleware baseApp = do
   path <- getPath
   method <- getMethod
-  liftIO . TIO.putStrLn $ "INFO: " `T.append` method `T.append` " to " `T.append` path
+  liftIO . TIO.putStrLn $ "INFO: " <> method <> " to " <> path
   baseApp
 
 app :: App ()
@@ -29,17 +31,17 @@ app = do
   route "/hello" hello
   route "/goodbye" goodbye
   route "/greeter" greeter
-  route "/users" getUser
+  route "/users/." getUser
 
 hello :: App T.Text
 hello = do
   name <- getQuery "name"
-  return $ "Hello " `T.append` fromMaybe "Stranger" name
+  return $ "Hello " <> fromMaybe "Stranger" name
 
 goodbye :: App T.Text
 goodbye = do
   name <- getCookie "name"
-  return $ "Goodbye " `T.append` fromMaybe "Stranger" name
+  return $ "Goodbye " <> fromMaybe "Stranger" name
 
 greeter :: App H.Html
 greeter = do
@@ -54,11 +56,13 @@ data User = User
 steve :: User
 steve = User{username="Steve", age=26}
 
-getUser :: App (T.Text, Status)
+getUser :: App W.Response
 getUser = do
   uname <- getQuery "username"
-  when (uname == Just "steve") (respond $ Json steve)
-  return ("Not found", notFound404)
+  return $ case uname of
+             Just "steve" -> toResponse $ Json steve
+             Just name -> toResponse $ "Couldn't find user: " <> name
+             Nothing -> toResponse @T.Text "Please provide a 'username' parameter"
 
 greet :: T.Text -> H.Html
 greet name = H.docTypeHtml $ do

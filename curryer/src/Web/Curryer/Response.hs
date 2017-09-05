@@ -28,6 +28,9 @@ newtype Json a = Json a
 class ToResponse c where
   toResponse :: c -> W.Response
 
+instance ToResponse String where
+  toResponse = mkResponse ok200 "text/plain" . T.pack
+
 instance ToResponse T.Text where
   toResponse = mkResponse ok200 "text/plain"
 
@@ -51,7 +54,6 @@ instance (ToResponse b) => ToResponse (b, Status, HeaderMap) where
         toResponse b
       & mapResponseStatus (const status)
       & mapResponseHeaders (++ fromHeaderMap hm)
-
 
 mkResponse :: Status -> ContentType -> T.Text -> W.Response
 mkResponse status contentType body =
