@@ -7,7 +7,7 @@ import qualified Data.Text as T
 import qualified Data.Map as M
 import qualified Data.CaseInsensitive as CI
 
--- | The main application definiton monad, sequence your
+-- | The main application definition monad, sequence your
 -- route handlers and/or middleware in this monad
 type App a = ReaderT ReqContext (ExceptT W.Response IO) a
 
