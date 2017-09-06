@@ -1,8 +1,8 @@
 name:                curryer-example
 version:             0.1.0.0
--- synopsis:
+synopsis:           A simple example using Curryer
 -- description:
-homepage:            https://github.com/ChrisPenner/curryer-example#readme
+homepage:            https://github.com/ChrisPenner/Curryer#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Chris Penner
@@ -13,22 +13,13 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
-library
-  hs-source-dirs:      src
-  exposed-modules:     Lib
-  build-depends:       base >= 4.7 && < 5
-  default-language:    Haskell2010
-
 executable curryer-example-exe
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , curryer
-                     , curryer-example
                      , text
-                     , lens
-                     , containers
                      , aeson
                      , blaze-html
                      , mtl
@@ -37,4 +28,4 @@ executable curryer-example-exe
 
 source-repository head
   type:     git
-  location: https://github.com/ChrisPenner/curryer-example
+  location: https://github.com/ChrisPenner/Curryer
