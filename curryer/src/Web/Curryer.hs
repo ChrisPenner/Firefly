@@ -6,8 +6,6 @@
 module Web.Curryer
   ( -- * Curryer Server
   run
-  -- * Combinators
-  -- , route
   -- * Types
   , App
   , Handler

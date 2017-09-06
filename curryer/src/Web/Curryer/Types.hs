@@ -10,6 +10,7 @@ import qualified Data.CaseInsensitive as CI
 -- | The main application definiton monad, sequence your
 -- route handlers and/or middleware in this monad
 type App a = ReaderT ReqContext (ContT W.Response IO) a
+
 -- | Handler is an alias for 'App', currently provided for semantic reasons,
 -- but the two may diverge in the future.
 type Handler a = App a

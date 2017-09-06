@@ -2,7 +2,6 @@
 {-# language RankNTypes #-}
 {-# language DeriveAnyClass #-}
 {-# language DeriveGeneric #-}
-{-# language TypeApplications #-}
 module Main where
 
 import Web.Curryer
@@ -19,6 +18,8 @@ import Network.Wai as W
 main :: IO ()
 main = run 3000 (loggerMiddleware app)
 
+-- Adding a pre-processor is as easy running actions before the main app.
+-- Note actions performed after a route matches won't occur.
 loggerMiddleware :: App () -> App ()
 loggerMiddleware baseApp = do
   path <- getPath
@@ -48,6 +49,14 @@ greeter = do
   name <- getQuery "name"
   return . greet $ fromMaybe "Stranger" name
 
+greet :: T.Text -> H.Html
+greet name = H.docTypeHtml $ do
+  H.head $
+    H.title "Hello!"
+  H.body $ do
+    H.h1 "Welcome to the Greeter!"
+    H.p ("Hello " >> H.toHtml name >> "!")
+
 data User = User
   { username::T.Text
   , age::Int
@@ -60,14 +69,6 @@ getUser :: App W.Response
 getUser = do
   uname <- getQuery "username"
   return $ case uname of
-             Just "steve" -> toResponse $ Json steve
-             Just name -> toResponse $ "Couldn't find user: " <> name
-             Nothing -> toResponse @T.Text "Please provide a 'username' parameter"
-
-greet :: T.Text -> H.Html
-greet name = H.docTypeHtml $ do
-  H.head $
-    H.title "Hello!"
-  H.body $ do
-    H.h1 "Welcome to the Greeter!"
-    H.p ("Hello " >> H.toHtml name >> "!")
+             Just "steve" -> toResponse $ Json steve -- If you just provide a body the status defaults to 200
+             Just name -> toResponse ("Couldn't find user: " <> name, notFound404)
+             Nothing -> toResponse ("Please provide a 'username' parameter" :: T.Text, badRequest400)
