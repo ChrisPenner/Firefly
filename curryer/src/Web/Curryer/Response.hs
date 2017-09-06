@@ -8,7 +8,7 @@ module Web.Curryer.Response
   ) where
 
 import Data.Function ((&))
-import Control.Monad.Reader
+import Control.Monad.Except
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
 import Data.Aeson as Aeson
@@ -68,6 +68,4 @@ mkResponse status contentType body =
 -- | Respond to the client immediately. Any statements following this one
 -- in the App or Handler Monads will not be run.
 respond :: ToResponse r => r -> App ()
-respond r = do
-  resp <- asks responder
-  lift . resp $ toResponse r
+respond =  throwError . toResponse

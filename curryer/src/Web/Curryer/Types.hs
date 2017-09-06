@@ -1,7 +1,7 @@
 module Web.Curryer.Types where
 
 import Control.Monad.Reader
-import Control.Monad.Cont
+import Control.Monad.Except
 import Network.Wai as W
 import qualified Data.Text as T
 import qualified Data.Map as M
@@ -9,7 +9,7 @@ import qualified Data.CaseInsensitive as CI
 
 -- | The main application definiton monad, sequence your
 -- route handlers and/or middleware in this monad
-type App a = ReaderT ReqContext (ContT W.Response IO) a
+type App a = ReaderT ReqContext (ExceptT W.Response IO) a
 
 -- | Handler is an alias for 'App', currently provided for semantic reasons,
 -- but the two may diverge in the future.
@@ -39,5 +39,4 @@ type ContentType = T.Text
 data ReqContext = ReqContext
   { requestBody :: T.Text
   , request :: W.Request
-  , responder :: W.Response -> ContT W.Response IO ()
   }

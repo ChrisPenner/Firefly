@@ -37,6 +37,9 @@ module Web.Curryer
   -- ** Wrapper Types
   , Json(..)
 
+  -- * Utilities
+  , addMiddleware
+
   -- * Exports
   -- | Re-exported types for your convenience
   , module Network.HTTP.Types.Status
@@ -47,7 +50,7 @@ import qualified Network.Wai as W
 import Network.HTTP.Types.Status
 
 import Control.Monad.Reader
-import Control.Monad.Cont
+import Control.Monad.Except
 
 import qualified Data.Text as T
 
@@ -70,13 +73,29 @@ run port app = W.run port warpApp
 
 -- | Run the app monad on a wai request to obtain a wai response
 runCurryer :: App () -> W.Request -> IO W.Response
-runCurryer app req = runContT (callCC unpackApp) return
+runCurryer app req = either id (const notFoundResp) <$> runExceptT unpackApp
   where
-    appWith404 = app >> return notFoundResp
-    unpackApp resp = do
+    unpackApp = do
       reqBody <- fmap fromLBS . liftIO $ W.strictRequestBody req
-      runReaderT appWith404 ReqContext{request=req, responder=resp, requestBody=reqBody}
+      runReaderT app ReqContext{request=req, requestBody=reqBody}
 
 -- | Default 404 response
 notFoundResp :: W.Response
 notFoundResp = toResponse @(T.Text, Status) ("Not Found", notFound404)
+
+-- | Run actions before your handlers and/or perform actions
+-- following the response.
+--
+-- @after@ will only be run if a response is provided from some handler
+addMiddleware :: App W.Request
+              -- ^ The Action to run before a 'W.Request' is processed.
+              -- The modified request which is returned will be passed to the app.
+              -> (W.Response -> App W.Response)
+              -- ^ Transform a 'W.Response' before it's sent
+              -> App ()
+              -- ^ The 'App' to wrap with middleware
+              -> App ()
+addMiddleware before after app = pre `catchError` post
+  where
+    post resp = after resp >>= throwError
+    pre = before >>= \req -> local (\ctx -> ctx{request=req}) app

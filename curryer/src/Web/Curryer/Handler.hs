@@ -9,8 +9,8 @@ module Web.Curryer.Handler
 import Web.Curryer.Types
 import Web.Curryer.Request
 import Web.Curryer.Response
-import Control.Monad.Cont
-import Control.Monad.Reader
+import Control.Monad
+import Control.Monad.Trans
 import qualified Data.Text as T
 
 import Text.Regex.PCRE
@@ -35,10 +35,8 @@ import Text.Regex.PCRE
 route :: (ToResponse r) => Pattern -> Handler r -> App ()
 route routePath handler = do
   path <- getPath
-  when (routePath `matches` path) $ do
-    response <- toResponse <$> handler
-    resp <- asks responder
-    lift $ resp response
+  liftIO . print $ "checking" `T.append` routePath
+  when (routePath `matches` path) (handler >>= respond . toResponse)
 
 -- | Determine whether a route matches a pattern
 matches :: Route -> Pattern -> Bool
