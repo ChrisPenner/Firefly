@@ -17,12 +17,11 @@ library
   hs-source-dirs:      src
   ghc-options:         -Wall
   exposed-modules:     Web.Curryer
-                       Web.Curryer.Routing
+                       Web.Curryer.Handler
                        Web.Curryer.Response
                        Web.Curryer.Request
                        Web.Curryer.Internal.Utils
                        Web.Curryer.Types
-                       Web.Curryer.Handler
 
   build-depends:       base >= 4.7 && < 5
                      , wai

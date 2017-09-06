@@ -22,9 +22,15 @@ import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Web.Curryer.Internal.Utils
 import Web.Curryer.Types
 
+-- | A simple newtype wrapper you can use to wrap values, signifying
+-- they should be JSON encoded sent with the "application/json"
+-- Content-Type.
 newtype Json a = Json a
   deriving Show
 
+-- | This class represents all types which can be converted into a valid
+-- 'W.Response'. Feel free to implement additional instances for your own
+-- data-types.
 class ToResponse c where
   toResponse :: c -> W.Response
 
@@ -59,6 +65,8 @@ mkResponse :: Status -> ContentType -> T.Text -> W.Response
 mkResponse status contentType body =
   W.responseLBS status [mkHeader "Content-Type" contentType] (toLBS body)
 
+-- | Respond to the client immediately. Any statements following this one
+-- in the App or Handler Monads will not be run.
 respond :: ToResponse r => r -> App ()
 respond r = do
   resp <- asks responder

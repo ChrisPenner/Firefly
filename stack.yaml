@@ -8,6 +8,7 @@ nix:
     - gcc
     - ncurses
     - pcre
+    - zlib
 
 packages:
 - ./curryer

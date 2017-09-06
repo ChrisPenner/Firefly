@@ -50,7 +50,6 @@ qsToList = fmap (bimap fromBS (fmap fromBS))
 convertQueries :: Query -> MultiQueryMap
 convertQueries = M.fromListWith (flip mappend) . fmap (second maybeToList) . qsToList
 
--- | Get first occurrance of each query param
+-- | Get last occurrance of each query param
 simpleQuery :: Query -> QueryMap
 simpleQuery = M.fromListWith (flip const) . fmap (second (fromMaybe "")) . qsToList
-
