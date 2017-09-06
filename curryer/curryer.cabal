@@ -1,6 +1,6 @@
 name:                curryer
 version:             0.1.0.0
--- synopsis:
+synopsis:            A simple HTTP server framework
 -- description:
 homepage:            https://github.com/ChrisPenner/curryer#readme
 license:             BSD3
