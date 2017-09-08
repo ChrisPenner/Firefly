@@ -9,7 +9,7 @@ It strives for simplicity in implementation (and in use).
 It's great for people learning Haskell, fiddling with Monads,
 or who just need a really simple server for something.
 
-Here's the minimal app:
+Here's a simple app:
 
 ```haskell
 {-# language OverloadedStrings #-}
@@ -21,7 +21,14 @@ main = run 3000 app
 
 app :: App ()
 app = do
-  route "/hello" (return "hello" :: Handler T.Text)
+  route "/hello" helloHandler
+
+-- | Get the 'name' query param from the url, if it doesn't exist use 'Stranger'
+helloHandler :: Handler T.Text
+hello = do
+  name <- fromMaybe "Stranger" <$> getQuery "name"
+  return $ "Hello " `T.append` name
+
 ```
 
 Just that easy!
@@ -51,15 +58,6 @@ of names to values.
 
 Let's write some more interesting handlers:
 
-```haskell
-hello :: App T.Text
-hello = do
-  -- | Get the 'name' query param from the url, if it doesn't exist use 'Stranger'
-  name <- getQuery "name"
-  -- If we just return some Text the response will be status 200 with a Content-Type of "text/plain"
-  return $ "Hello " <> fromMaybe "Stranger" name
-```
-
 Here's an example of responding with JSON:
 
 ```haskell
@@ -85,6 +83,7 @@ getUser = do
   return $ case uname of
              -- The Json constructor signals to serialize the value and respond as "application/json"
              Just "steve" -> toResponse $ Json steve 
+             -- We can use a tuple to pass a status alongside the response body
              Just name -> toResponse ("Couldn't find user: " `mappend` name, notFound404)
              Nothing -> toResponse ("Please provide a 'username' parameter" :: T.Text, badRequest400)
 ```
