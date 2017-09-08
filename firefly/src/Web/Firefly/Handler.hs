@@ -2,13 +2,13 @@
 {-# language FlexibleContexts #-}
 {-# language RankNTypes #-}
 {-# language ViewPatterns #-}
-module Web.Curryer.Handler
+module Web.Firefly.Handler
   ( route
   ) where
 
-import Web.Curryer.Types
-import Web.Curryer.Request
-import Web.Curryer.Response
+import Web.Firefly.Types
+import Web.Firefly.Request
+import Web.Firefly.Response
 import Control.Monad
 import Control.Monad.Trans
 import qualified Data.Text as T

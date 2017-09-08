@@ -1,7 +1,7 @@
 {-# language FlexibleInstances #-}
 {-# language OverloadedStrings #-}
 {-# language UndecidableInstances #-}
-module Web.Curryer.Response
+module Web.Firefly.Response
   ( ToResponse(..)
   , Json(..)
   , respond
@@ -19,8 +19,8 @@ import Network.HTTP.Types.Status
 import Text.Blaze.Html (Html)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 
-import Web.Curryer.Internal.Utils
-import Web.Curryer.Types
+import Web.Firefly.Internal.Utils
+import Web.Firefly.Types
 
 -- | A simple newtype wrapper you can use to wrap values, signifying
 -- they should be JSON encoded sent with the "application/json"

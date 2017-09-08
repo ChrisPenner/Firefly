@@ -3,8 +3,8 @@
 {-# language OverloadedStrings #-}
 {-# language FlexibleInstances #-}
 {-# language TypeApplications #-}
-module Web.Curryer
-  ( -- * Curryer Server
+module Web.Firefly
+  ( -- * Firefly Server
   run
   -- * Types
   , App
@@ -54,11 +54,11 @@ import Control.Monad.Except
 
 import qualified Data.Text as T
 
-import Web.Curryer.Handler
-import Web.Curryer.Request
-import Web.Curryer.Response
-import Web.Curryer.Types
-import Web.Curryer.Internal.Utils
+import Web.Firefly.Handler
+import Web.Firefly.Request
+import Web.Firefly.Response
+import Web.Firefly.Types
+import Web.Firefly.Internal.Utils
 
 -- | Run an http server on the given port.
 --
@@ -69,11 +69,11 @@ run :: W.Port -> App () -> IO ()
 run port app = W.run port warpApp
   where
     warpApp :: W.Request -> (W.Response -> IO W.ResponseReceived) -> IO W.ResponseReceived
-    warpApp req resp = runCurryer app req >>= resp
+    warpApp req resp = runFirefly app req >>= resp
 
 -- | Run the app monad on a wai request to obtain a wai response
-runCurryer :: App () -> W.Request -> IO W.Response
-runCurryer app req = either id (const notFoundResp) <$> runExceptT unpackApp
+runFirefly :: App () -> W.Request -> IO W.Response
+runFirefly app req = either id (const notFoundResp) <$> runExceptT unpackApp
   where
     unpackApp = do
       reqBody <- fmap fromLBS . liftIO $ W.strictRequestBody req

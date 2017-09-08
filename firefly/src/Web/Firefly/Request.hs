@@ -2,7 +2,7 @@
 {-# language FlexibleContexts #-}
 {-# language ConstraintKinds #-}
 {-# language RankNTypes #-}
-module Web.Curryer.Request
+module Web.Firefly.Request
   ( getPath
   , getPathInfo
   , getMethod
@@ -30,8 +30,8 @@ import qualified Data.CaseInsensitive as CI
 import Web.Cookie
 import qualified Network.Wai as W
 
-import Web.Curryer.Internal.Utils
-import Web.Curryer.Types
+import Web.Firefly.Internal.Utils
+import Web.Firefly.Types
 
 type ReqReader m = MonadReader ReqContext m
 

@@ -11,8 +11,8 @@ nix:
     - zlib
 
 packages:
-- ./curryer
-- ./curryer-example
+- ./firefly
+- ./firefly-example
 
 extra-deps: []
 

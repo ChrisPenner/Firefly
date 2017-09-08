@@ -1,4 +1,4 @@
-module Web.Curryer.Types where
+module Web.Firefly.Types where
 
 import Control.Monad.Reader
 import Control.Monad.Except

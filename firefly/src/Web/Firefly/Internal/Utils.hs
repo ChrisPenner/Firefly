@@ -1,5 +1,5 @@
 {-# language OverloadedStrings #-}
-module Web.Curryer.Internal.Utils where
+module Web.Firefly.Internal.Utils where
 
 import Data.Bifunctor
 import Data.Maybe
@@ -15,7 +15,7 @@ import qualified Data.CaseInsensitive as CI
 import qualified Network.HTTP.Types.Header as HTTP
 import Network.HTTP.Types.URI
 
-import Web.Curryer.Types
+import Web.Firefly.Types
 
 toBS :: T.Text -> BS.ByteString
 toBS = T.encodeUtf8

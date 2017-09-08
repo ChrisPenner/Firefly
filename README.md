@@ -1,9 +1,9 @@
-# Curryer
+# Firefly
 
-- [Example App](./curryer-example/app/Main.hs)
-- [Hackage Docs](http://hackage.haskell.org/package/curryer-0.1.0.0/docs/Web-Curryer.html)
+- [Example App](./firefly-example/app/Main.hs)
+- [Hackage Docs](http://hackage.haskell.org/package/firefly-0.1.0.0/docs/Web-Firefly.html)
 
-Curryer is dead simple http framework written in Haskell.
+Firefly is dead simple http framework written in Haskell.
 
 It strives for simplicity in implementation (and in use).
 It's great for people learning Haskell, fiddling with Monads,
@@ -13,7 +13,7 @@ Here's the minimal app:
 
 ```haskell
 {-# language OverloadedStrings #-}
-import Web.Curryer
+import Web.Firefly
 import qualified Data.Text as T
 
 main :: IO ()
@@ -26,7 +26,7 @@ app = do
 
 Just that easy!
 
-Check out the [Example App](./curryer-example/app/Main.hs) for more!
+Check out the [Example App](./firefly-example/app/Main.hs) for more!
 
 Specify your routes using regex patterns, the first one which matches will run.
 
@@ -39,7 +39,7 @@ Here are some valid response types and their inferred Content-Type
 - `Data.Aeson.Value`: `application/json` 
 - `Blaze.Html.Html`: `text/html`
 
-There are more in `Web.Curryer.Response`.
+There are more in `Web.Firefly.Response`.
 
 You can specify your status code using `(body, Status)` where body is any of
 the above types and Status is an Integer status code.
@@ -67,7 +67,7 @@ import Data.Aeson (ToJSON, FromJSON)
 import GHC.Generics (Generic)
 import qualified Data.Text as T
 import qualified Network.Wai as W
-import Web.Curryer
+import Web.Firefly
 
 data User = User
   { username::T.Text
@@ -89,15 +89,15 @@ getUser = do
              Nothing -> toResponse ("Please provide a 'username' parameter" :: T.Text, badRequest400)
 ```
 
-## Should I/Shouldn't I use Curryer?
+## Should I/Shouldn't I use Firefly?
 
-You should use Curryer if:
+You should use Firefly if:
 
 - You're intimidated by monads and want to learn more!
 - You want to write a hobby project
 - You like understanding the stack you're working with (The whole lib is ~300 lines without docs/imports)
 
-Don't use Curryer if:
+Don't use Firefly if:
 
 - You'll have thousands of users
 - You want the most performant server possible

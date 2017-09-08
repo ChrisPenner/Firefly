@@ -1,8 +1,8 @@
-name:                curryer-example
+name:                firefly-example
 version:             0.1.0.0
-synopsis:           A simple example using Curryer
+synopsis:           A simple example using Firefly
 -- description:
-homepage:            https://github.com/ChrisPenner/Curryer#readme
+homepage:            https://github.com/ChrisPenner/Firefly#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Chris Penner
@@ -13,12 +13,12 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
-executable curryer-example-exe
+executable firefly-example-exe
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
-                     , curryer
+                     , firefly
                      , text
                      , aeson
                      , blaze-html
@@ -28,4 +28,4 @@ executable curryer-example-exe
 
 source-repository head
   type:     git
-  location: https://github.com/ChrisPenner/Curryer
+  location: https://github.com/ChrisPenner/Firefly

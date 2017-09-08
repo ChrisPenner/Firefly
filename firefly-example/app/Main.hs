@@ -7,7 +7,7 @@ import Data.Aeson (ToJSON, FromJSON)
 import GHC.Generics (Generic)
 import qualified Data.Text as T
 import qualified Network.Wai as W
-import Web.Curryer
+import Web.Firefly
 
 -- | The Main app; this runs our app on port 3000 with logger middleware
 main :: IO ()

@@ -1,8 +1,8 @@
-name:                curryer
+name:                firefly
 version:             0.1.0.0
 synopsis:            A simple HTTP server framework
 -- description:
-homepage:            https://github.com/ChrisPenner/curryer#readme
+homepage:            https://github.com/ChrisPenner/firefly#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Chris Penner
@@ -16,12 +16,12 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   ghc-options:         -Wall
-  exposed-modules:     Web.Curryer
-                       Web.Curryer.Handler
-                       Web.Curryer.Response
-                       Web.Curryer.Request
-                       Web.Curryer.Internal.Utils
-                       Web.Curryer.Types
+  exposed-modules:     Web.Firefly
+                       Web.Firefly.Handler
+                       Web.Firefly.Response
+                       Web.Firefly.Request
+                       Web.Firefly.Internal.Utils
+                       Web.Firefly.Types
 
   build-depends:       base >= 4.7 && < 5
                      , wai
@@ -41,4 +41,4 @@ library
 
 source-repository head
   type:     git
-  location: https://github.com/ChrisPenner/curryer
+  location: https://github.com/ChrisPenner/firefly
