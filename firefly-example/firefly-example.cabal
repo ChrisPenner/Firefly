@@ -17,7 +17,7 @@ executable firefly-example-exe
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
-  build-depends:       base
+  build-depends:       base >= 4.7 && < 5
                      , firefly
                      , text
                      , aeson
