@@ -25,7 +25,7 @@ app = do
 
 -- | Get the 'name' query param from the url, if it doesn't exist use 'Stranger'
 helloHandler :: Handler T.Text
-hello = do
+helloHandler = do
   name <- fromMaybe "Stranger" <$> getQuery "name"
   return $ "Hello " `T.append` name
 
