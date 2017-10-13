@@ -35,7 +35,6 @@ import Text.Regex.PCRE
 route :: (ToResponse r) => Pattern -> Handler r -> App ()
 route routePath handler = do
   path <- getPath
-  liftIO . print $ "checking" `T.append` routePath
   when (routePath `matches` path) (handler >>= respond . toResponse)
 
 -- | Determine whether a route matches a pattern
