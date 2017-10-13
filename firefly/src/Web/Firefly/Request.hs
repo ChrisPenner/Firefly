@@ -11,6 +11,8 @@ module Web.Firefly.Request
   , getQueriesMulti
   , getQuery
   , getQueryMulti
+  , getHeader
+  , getHeaderMulti
   , getHeaders
   , getBody
   , getCookies
@@ -55,6 +57,14 @@ getQueryString = fromBS <$> fromReq W.rawQueryString
 -- | Gets full body of the request
 getBody  :: ReqReader m => m T.Text
 getBody = asks requestBody
+
+-- | Gets the headers of the request
+getHeader :: ReqReader m => T.Text -> m (Maybe T.Text)
+getHeader key = listToMaybe <$> getHeaderMulti key
+
+-- | Gets the headers of the request
+getHeaderMulti :: ReqReader m => T.Text -> m [T.Text]
+getHeaderMulti key = fromMaybe [] . M.lookup (CI.mk key) <$> getHeaders
 
 -- | Gets the headers of the request
 getHeaders :: ReqReader m => m HeaderMap
