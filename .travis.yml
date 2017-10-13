@@ -1,0 +1,50 @@
+# Adapted from https://github.com/commercialhaskell/stack
+language: nix
+sudo: false
+
+cache:
+    directories:
+        - $HOME/.ghc
+        - $HOME/.cabal
+        - $HOME/.stack
+        - /nix
+
+matrix:
+  fast_finish: true
+  include:
+    # Add build targets here
+    - env: GHCVER=8.0.2
+      compiler: ": #stack 8.0.2"
+      addons: {apt: {packages: [ghc-8.0.2], sources: [hvr-ghc]}}
+
+    - env: GHCVER=8.2.1
+      compiler: ": #stack 8.2.1"
+      addons: {apt: {packages: [ghc-8.2.1], sources: [hvr-ghc]}}
+
+    - env: GHCVER=8.0.2
+      compiler: ": #stack 8.0.2 osx"
+      os: osx
+
+# Note: the distinction between `before_install` and `install` is not important.
+# - in before_install we install build tools
+# - in install we install (haskell) dependencies
+before_install:
+ - unset CC
+ - export PATH=$HOME/.local/bin:/opt/ghc/$GHCVER/bin:$PATH
+ - ./.travis-setup.sh
+
+install:
+ - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
+ # Note: we build store by itself below due to high memory usage
+ - |
+   set -ex
+   stack --no-terminal build store
+   stack --no-terminal test --only-dependencies
+   set +ex
+
+script:
+ - GHC_OPTIONS="-Werror"
+ - |
+   set -ex
+   stack --no-terminal test --haddock --no-haddock-deps --ghc-options="$GHC_OPTIONS"
+   set +ex

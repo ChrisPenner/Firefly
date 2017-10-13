@@ -1,4 +1,5 @@
 # Firefly
+[![Build Status](https://travis-ci.org/ChrisPenner/Firefly.svg?branch=master)](https://travis-ci.org/ChrisPenner/Firefly)
 
 - [Example App](./firefly-example/app/Main.hs)
 - [Hackage Docs](http://hackage.haskell.org/package/firefly-0.1.0.0/docs/Web-Firefly.html)
