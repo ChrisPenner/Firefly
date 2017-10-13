@@ -101,3 +101,37 @@ Don't use Firefly if:
 - You'll have thousands of users
 - You want the most performant server possible
 - You want to have lots of helper libs available
+
+## Troubleshooting
+
+### pcre.h not found
+
+Seeing something like this?
+```
+...stack/regex-pcre-0.94.4/Wrap.hsc:148:10: fatal error: 'pcre.h' file not found
+    #include <pcre.h>
+             ^~~~~~~~
+    1 error generated.
+```
+
+Firefly uses regex; and requires certain c-libs to be installed. The easiest way to fix this is to install Nix:
+
+[Get Nix](https://nixos.org/nix/)
+
+*or* run:
+
+`curl https://nixos.org/nix/install | sh`
+
+Then add the following to your project's `stack.yaml`:
+
+```
+nix:
+  enable: true
+  packages:
+    - libcxx
+    - icu
+    - gcc
+    - ncurses
+    - pcre
+    - zlib
+```
