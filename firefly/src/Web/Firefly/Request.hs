@@ -2,6 +2,7 @@
 {-# language FlexibleContexts #-}
 {-# language ConstraintKinds #-}
 {-# language RankNTypes #-}
+{-# language ViewPatterns #-}
 module Web.Firefly.Request
   ( getPath
   , getPathInfo
@@ -20,6 +21,7 @@ module Web.Firefly.Request
   , getCookie
   , isSecure
   , waiRequest
+  , pathMatches
   ) where
 
 import Control.Monad.Reader
@@ -28,6 +30,7 @@ import Data.Bifunctor
 import qualified Data.Text as T
 import qualified Data.Map as M
 import qualified Data.CaseInsensitive as CI
+import Text.Regex.PCRE
 
 import Web.Cookie
 import qualified Network.Wai as W
@@ -118,3 +121,10 @@ getPathInfo = fromReq W.pathInfo
 -- | Exposes the underlying 'W.Request'.
 waiRequest :: ReqReader m =>  m W.Request
 waiRequest = asks request
+
+-- | Determine whether a route matches a pattern
+pathMatches :: ReqReader m => Pattern -> m Bool
+pathMatches pattern = checkMatch pattern <$> getPath 
+  where
+    checkMatch :: Pattern -> Route -> Bool
+    checkMatch (T.unpack -> pat) (T.unpack -> rt) = ("^" ++ pat ++ "$") =~ rt

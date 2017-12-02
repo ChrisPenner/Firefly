@@ -29,6 +29,7 @@ module Web.Firefly
   , getCookie
   , isSecure
   , waiRequest
+  , pathMatches
 
   -- * Responses
   , ToResponse(..)

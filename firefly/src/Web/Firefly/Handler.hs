@@ -10,10 +10,6 @@ import Web.Firefly.Types
 import Web.Firefly.Request
 import Web.Firefly.Response
 import Control.Monad
-import Control.Monad.Trans
-import qualified Data.Text as T
-
-import Text.Regex.PCRE
 
 -- | Run a handler on a matching route.
 -- The handler may return any type which implements 'ToResponse'
@@ -34,9 +30,5 @@ import Text.Regex.PCRE
 -- >   route "/helloHarry" helloHarryHandler
 route :: (ToResponse r) => Pattern -> Handler r -> App ()
 route routePath handler = do
-  path <- getPath
-  when (routePath `matches` path) (handler >>= respond . toResponse)
-
--- | Determine whether a route matches a pattern
-matches :: Route -> Pattern -> Bool
-matches (T.unpack -> rt) (T.unpack -> pat) = ("^" ++ pat ++ "$") =~ rt
+  doesPathMatch <- pathMatches routePath
+  when doesPathMatch (handler >>= respond . toResponse)
