@@ -28,7 +28,7 @@ import Control.Monad
 -- >   route "/" indexHandler
 -- >   route "/hello.*" helloHandler
 -- >   route "/helloHarry" helloHarryHandler
-route :: (ToResponse r) => Pattern -> Handler r -> App ()
+route :: ToResponse r => Pattern -> Handler r -> App ()
 route routePath handler = do
   doesPathMatch <- pathMatches routePath
-  when doesPathMatch (handler >>= respond . toResponse)
+  when doesPathMatch $ respondWith handler

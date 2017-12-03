@@ -1,10 +1,12 @@
 {-# language FlexibleInstances #-}
 {-# language OverloadedStrings #-}
 {-# language UndecidableInstances #-}
+{-# language RankNTypes #-}
 module Web.Firefly.Response
   ( ToResponse(..)
   , Json(..)
   , respond
+  , respondWith
   ) where
 
 import Data.Function ((&))
@@ -69,3 +71,8 @@ mkResponse status contentType body =
 -- in the App or Handler Monads will not be run.
 respond :: ToResponse r => r -> App ()
 respond =  throwError . toResponse
+
+-- | Use a given handler to respond to the request. 
+-- Any handlers following this will not run.
+respondWith :: ToResponse r => Handler r -> App ()
+respondWith handler = runHandler handler >>= respond

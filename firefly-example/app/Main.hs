@@ -36,7 +36,7 @@ helloHandler = do
   -- a Content-Type of "text/plain"
   return $ "Hello " <> name
 
-goodbyeHandler :: App H.Html
+goodbyeHandler :: Handler H.Html
 goodbyeHandler = do
   pathInfo <- getPathInfo
   return . byeHtml $
@@ -63,7 +63,7 @@ steve :: User
 steve = User{username="Steve", age=26}
 
 -- | Get a user by username
-getUser :: App W.Response
+getUser :: Handler W.Response
 getUser = do
   uname <- getQuery "username"
   return $ case uname of

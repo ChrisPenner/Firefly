@@ -9,9 +9,11 @@ module Web.Firefly
   -- * Types
   , App
   , Handler
+  , HeaderMap
 
   -- * Handlers
   , route
+  , runHandler
 
   -- * Requests
   , getPath
@@ -34,6 +36,7 @@ module Web.Firefly
   -- * Responses
   , ToResponse(..)
   , respond
+  , respondWith
 
   -- ** Wrapper Types
   , Json(..)
