@@ -1,3 +1,6 @@
+## 0.2.1.0
+- Fix faulty regex route matching
+
 ## 0.2.0.0
 - Expose HeaderMap type
 - Add `runHandler`
