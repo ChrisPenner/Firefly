@@ -4,7 +4,7 @@
 - [Example App](./firefly-example/app/Main.hs)
 - [Hackage Docs](http://hackage.haskell.org/package/firefly-0.1.0.0/docs/Web-Firefly.html)
 
-Firefly is dead simple http framework written in Haskell.
+Firefly is a dead simple http framework written in Haskell.
 
 It strives for simplicity in implementation (and in use).
 It's great for people learning Haskell, fiddling with Monads,
